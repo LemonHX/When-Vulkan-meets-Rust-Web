@@ -1,0 +1,620 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>1.1 创建实例 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="1.2配置validation_layer.html" />
+    
+    
+    <link rel="prev" href="1.0代码结构.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../overview.html">
+            
+                <a href="../overview.html">
+            
+                    
+                    概览
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../tools.html">
+            
+                <a href="../tools.html">
+            
+                    
+                    工具安装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    1.画个三角形吧
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="1.0代码结构.html">
+            
+                <a href="1.0代码结构.html">
+            
+                    
+                    1.0 代码结构
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.2" data-path="1.1创建实例.html">
+            
+                <a href="1.1创建实例.html">
+            
+                    
+                    1.1 创建实例
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="1.2配置validation_layer.html">
+            
+                <a href="1.2配置validation_layer.html">
+            
+                    
+                    1.2 配置validation_layer
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="1.3选择物理设备.html">
+            
+                <a href="1.3选择物理设备.html">
+            
+                    
+                    1.3 选择物理设备
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="1.4创建逻辑设备.html">
+            
+                <a href="1.4创建逻辑设备.html">
+            
+                    
+                    1.4 创建逻辑设备
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="1.5窗口表面.html">
+            
+                <a href="1.5窗口表面.html">
+            
+                    
+                    1.5 窗口表面
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="1.6创建交换链.html">
+            
+                <a href="1.6创建交换链.html">
+            
+                    
+                    1.6 创建交换链
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="1.7图片视图.html">
+            
+                <a href="1.7图片视图.html">
+            
+                    
+                    1.7 图片视图
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="1.8图形管线.html">
+            
+                <a href="1.8图形管线.html">
+            
+                    
+                    1.8 图形管线
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.10" data-path="1.9着色模板.html">
+            
+                <a href="1.9着色模板.html">
+            
+                    
+                    1.9 着色模板
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.11" data-path="1.10有用的函数.html">
+            
+                <a href="1.10有用的函数.html">
+            
+                    
+                    1.10 有用的函数
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.12" data-path="1.11渲染过程.html">
+            
+                <a href="1.11渲染过程.html">
+            
+                    
+                    1.11 渲染过程
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.13" data-path="1.12把图形管线写完.html">
+            
+                <a href="1.12把图形管线写完.html">
+            
+                    
+                    1.12 把图形管线写完
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.14" data-path="1.13帧缓冲.html">
+            
+                <a href="1.13帧缓冲.html">
+            
+                    
+                    1.13 帧缓冲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.15" data-path="1.14命令池.html">
+            
+                <a href="1.14命令池.html">
+            
+                    
+                    1.14 命令池
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.16" data-path="1.15劳资要的三角形.html">
+            
+                <a href="1.15劳资要的三角形.html">
+            
+                    
+                    1.15 劳资要的三角形
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.17" data-path="1.16优化交换链.html">
+            
+                <a href="1.16优化交换链.html">
+            
+                    
+                    1.16 优化交换链
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >1.1 创建实例</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="11-&#x641E;&#x4E86;&#x534A;&#x5929;&#x4E86;vulkan&#x7684;&#x5F71;&#x513F;&#x90FD;&#x6CA1;&#x770B;&#x89C1;&#x8001;&#x677F;&#x80FD;&#x4E0D;&#x80FD;&#x628A;&#x4E3B;&#x83DC;&#x7AEF;&#x4E0A;&#x6765;">1.1 &#x641E;&#x4E86;&#x534A;&#x5929;&#x4E86;Vulkan&#x7684;&#x5F71;&#x513F;&#x90FD;&#x6CA1;&#x770B;&#x89C1;,&#x8001;&#x677F;,&#x80FD;&#x4E0D;&#x80FD;&#x628A;&#x4E3B;&#x83DC;&#x7AEF;&#x4E0A;&#x6765;?</h1>
+<p>&#x597D;&#x5427;,&#x6211;&#x4EEC;&#x5728;&#x4E0A;&#x5C0F;&#x8282;&#x91CC;&#x521B;&#x5EFA;&#x4E86;&#x9700;&#x8981;&#x627F;&#x8F7D;vulkan&#x7684;&#x7A97;&#x53E3;,&#x73B0;&#x5728;&#x53EF;&#x4EE5;&#x5B9E;&#x73B0;&#x4E00;&#x4E0B;vulkan&#x7684;&#x5B9E;&#x4F8B;&#x4E86;.</p>
+<p>&#x6211;&#x4EEC;&#x5728;<code>app</code>&#x76EE;&#x5F55;&#x4E0B;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;<code>vki.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> super::super::platforms::required_extension::*;<span class="hljs-comment">//&#x8FD9;&#x4E2A;&#x9A6C;&#x4E0A;&#x5199;</span>
+<span class="hljs-keyword">use</span> ash::version::EntryV1_0;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> ash::vk_make_version;
+<span class="hljs-keyword">use</span> std::ffi::CString;
+<span class="hljs-keyword">use</span> std::ptr;
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> WINDOW_TITLE: &amp;<span class="hljs-symbol">&apos;static</span> <span class="hljs-keyword">str</span> = <span class="hljs-string">&quot;When Vulkan meets Rust&quot;</span>;
+<span class="hljs-comment">//vulkan&#x7684;&#x7248;&#x672C;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x4E00;&#x4E2A;&#x5B8F;&#x6765;&#x6784;&#x9020;,&#x5176;&#x5B9E;&#x662F;u32&#x7C7B;&#x578B;&#x7684;,&#x8FD9;&#x91CC;&#x5927;&#x5BB6;&#x53EF;&#x4EE5;&#x6839;&#x636E;&#x81EA;&#x5DF1;vulkan&#x7684;&#x7248;&#x672C;&#x6765;&#x8FDB;&#x884C;&#x914D;&#x7F6E;</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> APPLICATION_VERSION: <span class="hljs-keyword">u32</span> = vk_make_version!(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> ENGINE_VERSION: <span class="hljs-keyword">u32</span> = vk_make_version!(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> API_VERSION: <span class="hljs-keyword">u32</span> = vk_make_version!(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">92</span>);
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">VKI</span></span> {
+    <span class="hljs-keyword">pub</span> instance: ash::Instance, <span class="hljs-comment">//Vulkan&#x5B9E;&#x4F8B;</span>
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x5B9E;&#x73B0;&#x4E00;&#x4E0B;<code>new</code>&#x65B9;&#x6CD5;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> VKI {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>() -&gt; VKI {
+        <span class="hljs-keyword">let</span> entry = ash::Entry::new().unwrap(); <span class="hljs-comment">//&#x5165;&#x53E3;</span>
+
+        <span class="hljs-keyword">let</span> app_name = CString::new(WINDOW_TITLE).unwrap(); <span class="hljs-comment">//vulkan&#x5185;&#x90E8;&#x63CF;&#x8FF0;&#x5E94;&#x7528;&#x7684;&#x540D;&#x79F0;</span>
+        <span class="hljs-keyword">let</span> engine_name = CString::new(<span class="hljs-string">&quot;Vulkan Engine&quot;</span>).unwrap();
+        <span class="hljs-keyword">let</span> app_info = vk::ApplicationInfo {
+            s_type: vk::StructureType::APPLICATION_INFO,<span class="hljs-comment">//&#x7ED3;&#x6784;&#x7C7B;&#x578B;</span>
+            p_next: ptr::null(),<span class="hljs-comment">//&#x4E00;&#x4F1A;&#x513F;&#x518D;&#x8BB2;</span>
+            p_application_name: app_name.as_ptr(),<span class="hljs-comment">//app&#x540D;&#x79F0;</span>
+            application_version: APPLICATION_VERSION,<span class="hljs-comment">//app&#x7248;&#x672C;</span>
+            p_engine_name: engine_name.as_ptr(),<span class="hljs-comment">//&#x5F15;&#x64CE;&#x540D;&#x79F0;</span>
+            engine_version: ENGINE_VERSION,<span class="hljs-comment">//&#x5F15;&#x64CE;&#x7248;&#x672C;</span>
+            api_version: API_VERSION, <span class="hljs-comment">//api&#x7248;&#x672C;</span>
+        }; <span class="hljs-comment">//&#x5E94;&#x7528;&#x4FE1;&#x606F;</span>
+
+        <span class="hljs-keyword">let</span> extension_names = required_extension_names();<span class="hljs-comment">//&#x8FD9;&#x4E2A;&#x9A6C;&#x4E0A;&#x5199;</span>
+
+        <span class="hljs-keyword">let</span> create_info = vk::InstanceCreateInfo {
+            s_type: vk::StructureType::INSTANCE_CREATE_INFO,
+            p_next: ptr::null(),
+            flags: vk::InstanceCreateFlags::empty(),<span class="hljs-comment">//&#x4E00;&#x4F1A;&#x513F;&#x518D;&#x8BB2;</span>
+            p_application_info: &amp;app_info,<span class="hljs-comment">//&#x521A;&#x521A;&#x6211;&#x4EEC;&#x521B;&#x5EFA;&#x7684;&#x63CF;&#x8FF0;&#x4FE1;&#x606F;</span>
+            pp_enabled_layer_names: ptr::null(),<span class="hljs-comment">//&#x4E00;&#x4F1A;&#x513F;&#x8BB2;,&#x6682;&#x65F6;&#x7528;&#x4E0D;&#x5230;</span>
+            enabled_layer_count: <span class="hljs-number">0</span>,<span class="hljs-comment">//&#x540C;&#x4E0A;</span>
+            pp_enabled_extension_names: extension_names.as_ptr(),<span class="hljs-comment">//&#x542F;&#x7528;&#x7684;&#x6269;&#x5C55;</span>
+            enabled_extension_count: extension_names.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,<span class="hljs-comment">//&#x6269;&#x5C55;&#x8868;&#x5217;&#x957F;&#x5EA6;</span>
+        };
+
+        <span class="hljs-keyword">let</span> instance: ash::Instance = <span class="hljs-keyword">unsafe</span> { <span class="hljs-comment">//unsafe&#x56E0;&#x4E3A;vulkan&#x662F;C&#x8BED;&#x8A00;&#x5199;&#x7684;</span>
+            entry
+                .create_instance(&amp;create_info, <span class="hljs-literal">None</span>)
+                .expect(<span class="hljs-string">&quot;Vulkan&#x5B9E;&#x4F8B;&#x521B;&#x5EFA;&#x5931;&#x8D25; &#x539F;&#x56E0;:&quot;</span>)
+        };
+
+        VKI { instance: instance }
+    }
+}
+</code></pre>
+<p>&#x56E0;&#x4E3A;vulkan&#x662F;C&#x8BED;&#x8A00;&#x5199;&#x7684;(&#x4E3A;&#x4E86;&#x8FFD;&#x6C42;&#x6700;&#x5F3A;&#x6027;&#x80FD;),&#x6240;&#x4EE5;&#x4ED6;&#x7684;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x5B8C;&#x5168;&#x662F;&#x624B;&#x52A8;&#x7684;.</p>
+<p>&#x800C;Rust&#x6CA1;&#x600E;&#x4E48;&#x7528;&#x8FC7;<code>free()</code>&#x51FD;&#x6570;&#x662F;&#x56E0;&#x4E3A;Rust&#x91C7;&#x7528;&#x4E86;RAII,&#x5F53;&#x5BF9;&#x8C61;&#x4ECE;&#x4F5C;&#x7528;&#x7A7A;&#x95F4;&#x91CC;&#x6D88;&#x5931;&#x7684;&#x65F6;&#x5019;&#x4F1A;&#x81EA;&#x52A8;&#x8C03;&#x7528;<code>drop</code>&#x51FD;&#x6570;</p>
+<p>&#x4E00;&#x822C;&#x60C5;&#x51B5;&#x4E0B;<code>drop</code>&#x51FD;&#x6570;&#x90FD;&#x662F;Rust&#x66FF;&#x6211;&#x4EEC;&#x5199;&#x597D;&#x7684;,&#x4E0D;&#x8FC7;&#x8FD9;&#x6B21;&#x4E0D;&#x4E00;&#x6837;,&#x6211;&#x4EEC;&#x9700;&#x8981;&#x624B;&#x52A8;&#x53BB;&#x91CA;&#x653E;vulkan&#x521B;&#x5EFA;&#x51FA;&#x6765;&#x7684;&#x4E00;&#x5806;&#x4E1C;&#x897F;,&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x624B;&#x52A8;&#x5199;drop&#x51FD;&#x6570;
+&#x8FD8;&#x662F;&#x90A3;&#x4E2A;&#x6587;&#x4EF6;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> <span class="hljs-built_in">Drop</span> <span class="hljs-keyword">for</span> VKI {
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">drop</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {
+        <span class="hljs-keyword">unsafe</span> {<span class="hljs-comment">//&#x56E0;&#x4E3A;&#x6D89;&#x53CA;&#x5230;&#x4E86;&#x88F8;&#x6307;&#x9488;&#x64CD;&#x4F5C;</span>
+            <span class="hljs-keyword">self</span>.instance.destroy_instance(<span class="hljs-literal">None</span>);
+        }
+    }
+}
+</code></pre>
+<p><br>
+<br>
+<br>
+&#x56E0;&#x4E3A;vulkan&#x6BCF;&#x4E2A;&#x5E73;&#x53F0;&#x4E0A;&#x7528;&#x7684;&#x6E32;&#x67D3;&#x65B9;&#x6CD5;&#x90FD;&#x4E0D;&#x592A;&#x4E00;&#x6837;
+&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x8981;&#x5B9E;&#x73B0;&#x4E00;&#x4E2A;&#x975E;&#x5E38;&#x5E73;&#x53F0;&#x76F8;&#x5173;&#x7684;&#x4E00;&#x5806;&#x51FD;&#x6570;</p>
+<p>&#x5728;<code>src</code>&#x4E0B;&#x521B;&#x5EFA;<code>platforms</code>&#x6587;&#x4EF6;&#x5939;,&#x81EA;&#x884C;&#x914D;&#x7F6E;<code>lib.rs</code></p>
+<p>&#x5728;<code>platforms</code>&#x4E0B;&#x521B;&#x5EFA;<code>required_extension.rs</code>&#x81EA;&#x884C;&#x5199;<code>mod.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-meta">#[cfg(target_os = <span class="hljs-meta-string">&quot;windows&quot;</span>)]</span> <span class="hljs-comment">//&#x5BF9;&#x4E8E;windows&#x5E73;&#x53F0;&#x7528;&#x7684;&#x662F;win32&#x7684;surface</span>
+<span class="hljs-keyword">use</span> ash::extensions::khr::Win32Surface;
+<span class="hljs-meta">#[cfg(all(unix, not(target_os = <span class="hljs-meta-string">&quot;android&quot;</span>), not(target_os = <span class="hljs-meta-string">&quot;macos&quot;</span>)))]</span> 
+<span class="hljs-comment">//&#x5BF9;&#x4E8E;&#x4E0D;&#x662F;&#x5B89;&#x5353;,&#x82F9;&#x679C;&#x7684;unix(linux BSD HPUnix&#x4E4B;&#x7C7B;&#x7684;)&#x7528;&#x7684;Xlib</span>
+<span class="hljs-keyword">use</span> ash::extensions::khr::XlibSurface;
+
+<span class="hljs-keyword">use</span> ash::extensions::khr::Surface;
+<span class="hljs-keyword">use</span> ash::extensions::ext::DebugReport;
+
+<span class="hljs-comment">// *const i8 &#x662F;&#x6307;&#x9488;&#x7C7B;&#x578B;,&#x8FD9;&#x4E2A;&#x4E5F;&#x662F;&#x56E0;&#x4E3A;vulkan&#x662F;C&#x5199;&#x7684;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4F20;&#x9012;&#x88F8;&#x6307;&#x9488;</span>
+<span class="hljs-meta">#[cfg(all(windows))]</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">required_extension_names</span></span>() -&gt; <span class="hljs-built_in">Vec</span>&lt;*<span class="hljs-keyword">const</span> <span class="hljs-keyword">i8</span>&gt; {
+    <span class="hljs-built_in">vec!</span>[
+        Surface::name().as_ptr(),
+        Win32Surface::name().as_ptr(),
+        DebugReport::name().as_ptr(),
+    ]
+}
+
+<span class="hljs-meta">#[cfg(all(unix, not(target_os = <span class="hljs-meta-string">&quot;android&quot;</span>), not(target_os = <span class="hljs-meta-string">&quot;macos&quot;</span>)))]</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">required_extension_names</span></span>() -&gt; <span class="hljs-built_in">Vec</span>&lt;*<span class="hljs-keyword">const</span> <span class="hljs-keyword">i8</span>&gt; {
+    <span class="hljs-built_in">vec!</span>[
+        Surface::name().as_ptr(),
+        XlibSurface::name().as_ptr(),
+        DebugReport::name().as_ptr(),
+    ]
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x5462;,&#x6211;&#x4EEC;&#x5199;&#x597D;&#x4E86;&#x4E00;&#x5207;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;vulkan&#x5B9E;&#x4F8B;&#x7528;&#x7684;&#x4E1C;&#x897F;&#x4E86;,&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x8981;&#x628A;&#x6211;&#x4EEC;&#x7684;<code>VKI</code>&#x52A0;&#x5165;&#x5230;<code>App</code>&#x91CC;&#x5C31;&#x597D;&#x4E86;,&#x8FD8;&#x662F;<code>app.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">App</span></span> {
+    <span class="hljs-keyword">pub</span> window: winit::Window,
+    <span class="hljs-keyword">pub</span> vki: VKI, <span class="hljs-comment">//&#x65B0;&#x589E;</span>
+}
+
+<span class="hljs-keyword">impl</span> App {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>(events_loop: &amp;EventsLoop) -&gt; App {
+        <span class="hljs-keyword">let</span> window = window_create(WINDOW_TITLE.to_string(), <span class="hljs-number">800</span>, <span class="hljs-number">600</span>, events_loop);
+        <span class="hljs-keyword">return</span> App {
+            window: window,
+            vki: VKI::new(),<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+        };
+    }
+}
+</code></pre>
+<p>&#x4E00;&#x5207;&#x51C6;&#x5907;&#x5C31;&#x7EEA;,&#x53EF;&#x4EE5;<code>cargo run</code>&#x8DD1;&#x8DD1;&#x770B;&#x770B;&#x4E86;</p>
+<p><strong>&#x8865;&#x5145;: &#x5982;&#x679C;&#x7EC8;&#x7AEF;&#x663E;&#x793A; error: process didn&apos;t exit successfully: <code>target\debug\vk_00.exe</code> (exit code: 0xc0000005, STATUS_ACCESS_VIOLATION)&#x6216;&#x7C7B;&#x4F3C;&#x95EE;&#x9898;,&#x8BF7;&#x4E0D;&#x8981;&#x6025;,&#x5728;1.2&#x4F1A;&#x89E3;&#x51B3;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x7684;</strong></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="1.0代码结构.html" class="navigation navigation-prev " aria-label="Previous page: 1.0 代码结构">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="1.2配置validation_layer.html" class="navigation navigation-next " aria-label="Next page: 1.2 配置validation_layer">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"1.1 创建实例","level":"1.4.2","depth":2,"next":{"title":"1.2 配置validation_layer","level":"1.4.3","depth":2,"path":"画个三角形吧/1.2配置validation_layer.md","ref":"画个三角形吧/1.2配置validation_layer.md","articles":[]},"previous":{"title":"1.0 代码结构","level":"1.4.1","depth":2,"path":"画个三角形吧/1.0代码结构.md","ref":"画个三角形吧/1.0代码结构.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.1创建实例.md","mtime":"2019-03-21T21:54:08.939Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-03-21T22:55:53.988Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
