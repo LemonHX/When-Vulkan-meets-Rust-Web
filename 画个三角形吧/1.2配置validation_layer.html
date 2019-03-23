@@ -444,6 +444,246 @@
 }
 </code></pre>
 <p>&#x7136;&#x540E;&#x628A; <code>window.rs</code>&#x91CC;&#x7684;<code>String</code> &#x6362;&#x6210;<code>&amp;&apos;static str</code>&#x8FD9;&#x6837;&#x80FD;&#x63D0;&#x5347;&#x6027;&#x80FD;(&#x5FFD;&#x7565;&#x4E0D;&#x8BA1;&#x7684;)</p>
+<p>&#x6211;&#x4EEC;&#x9700;&#x8981;&#x51C6;&#x5907;&#x4E00;&#x4E2A;&#x53EB;<code>vk_to_string</code>&#x7684;&#x51FD;&#x6570;,&#x56E0;&#x4E3A;vulkan&#x7684;log&#x90FD;&#x662F;C&#x8BED;&#x8A00;&#x7684;string,&#x6211;&#x4EEC;&#x9700;&#x8981;&#x628A;&#x4ED6;&#x8F6C;&#x6362;&#x5230;Rust&#x7684;String
+&#x65B0;&#x5EFA;&#x76EE;&#x5F55;<code>utils\tools.rs</code>&#x81EA;&#x884C;&#x8865;&#x5168;<code>lib.rs</code>&#x548C;<code>mod.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::ffi::CStr;
+<span class="hljs-keyword">use</span> std::os::raw::c_char;
+<span class="hljs-keyword">use</span> std::path::Path;
+<span class="hljs-comment">//&#x8BF7;&#x5927;&#x5BB6;&#x4E0D;&#x8981;&#x5FD8;&#x8BB0; char* &#x4ED6;&#x53EF;&#x662F;&#x6211;&#x6700;&#x559C;&#x6B22;&#x7684;C&#x8BED;&#x8A00;&#x7C7B;&#x578B;</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">vk_to_string</span></span>(raw_string_array: &amp;[c_char]) -&gt; <span class="hljs-built_in">String</span> {
+    <span class="hljs-keyword">let</span> raw_string = <span class="hljs-keyword">unsafe</span> {
+        <span class="hljs-keyword">let</span> pointer = raw_string_array.as_ptr();
+        CStr::from_ptr(pointer)
+    };
+    raw_string
+        .to_str()
+        .expect(<span class="hljs-string">&quot;&#x8F6C;&#x6362;&#x5931;&#x8D25;!&quot;</span>)
+        .to_owned()
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x5F00;&#x59CB;&#x91CD;&#x5934;&#x620F;</p>
+<p>&#x5728;<code>app</code>&#x4E0B;&#x521B;&#x5EFA;<code>validation.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> super::super::platforms::required_extension::*;
+<span class="hljs-keyword">use</span> super::super::utils::tools::*;
+<span class="hljs-keyword">use</span> ash::version::EntryV1_0;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> ash::vk_make_version;
+<span class="hljs-keyword">use</span> std::ffi::{CStr, CString};
+<span class="hljs-keyword">use</span> std::os::raw::{c_char, c_void};
+<span class="hljs-keyword">use</span> std::ptr;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">ValidationInfo</span></span> {
+    <span class="hljs-keyword">pub</span> is_enable: <span class="hljs-keyword">bool</span>,
+    <span class="hljs-keyword">pub</span> required_validation_layers: [&amp;<span class="hljs-symbol">&apos;static</span> <span class="hljs-keyword">str</span>; <span class="hljs-number">1</span>],
+}
+
+<span class="hljs-comment">//&#x4E0B;&#x9762;&#x8FD9;&#x4E2A;&#x5E38;&#x6570;&#x662F;&#x65B9;&#x4FBF;&#x5F00;&#x5173;validation&#x7684;,&#x6709;&#x70B9; #ifdef &#x7684;&#x610F;&#x601D;</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> VALIDATION: ValidationInfo = ValidationInfo {
+    is_enable: <span class="hljs-literal">true</span>,
+    required_validation_layers: [<span class="hljs-string">&quot;VK_LAYER_LUNARG_standard_validation&quot;</span>], 
+    <span class="hljs-comment">//&#x6211;&#x4EEC;&#x9700;&#x8981;&#x62FF;&#x8FC7;&#x6765;LUNARG&#x5199;&#x7684;&#x6807;&#x51C6;&#x7684;&#x9A8C;&#x8BC1;&#x5C42;</span>
+};
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">check_validation_layer_support</span></span>(entry: &amp;ash::Entry) -&gt; <span class="hljs-keyword">bool</span> {
+    <span class="hljs-comment">// &#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x68C0;&#x67E5;&#x652F;&#x6301;&#x9A8C;&#x8BC1;&#x5C42;&#x7684;&#x60C5;&#x51B5;</span>
+    <span class="hljs-comment">//&#x5982;&#x679C;&#x652F;&#x6301;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;true</span>
+
+    <span class="hljs-keyword">let</span> layer_properties = entry
+        .enumerate_instance_layer_properties() <span class="hljs-comment">//&#x679A;&#x4E3E;&#x5B9E;&#x4F8B;&#x5C42;&#x5C5E;&#x6027;</span>
+        .expect(<span class="hljs-string">&quot;&#x679A;&#x4E3E;&#x5B9E;&#x4F8B;&#x5C42;&#x5931;&#x8D25;!&quot;</span>);
+
+    <span class="hljs-keyword">if</span> layer_properties.len() &lt;= <span class="hljs-number">0</span> {
+        eprintln!(<span class="hljs-string">&quot;&#x6CA1;&#x6709;&#x53EF;&#x7528;&#x5C42;.&quot;</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#x53EF;&#x7528;&#x5B9E;&#x4F8B;&#x5C42;: &quot;</span>);
+        <span class="hljs-keyword">for</span> layer <span class="hljs-keyword">in</span> layer_properties.iter() { <span class="hljs-comment">//&#x628A;&#x53EF;&#x7528;&#x7684;&#x5B9E;&#x4F8B;&#x5C42;&#x90FD;&#x6253;&#x5370;&#x51FA;&#x6765;</span>
+            <span class="hljs-keyword">let</span> layer_name = vk_to_string(&amp;layer.layer_name);
+            <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;\t{}&quot;</span>, layer_name);
+        }
+    }
+
+    <span class="hljs-comment">//&#x628A;&#x6240;&#x6709;&#x7684;layer&#x7FFB;&#x4E2A;&#x904D;,&#x627E;&#x627E;&#x54B1;&#x8981;&#x7684;&#x90A3;&#x4E2A;layer,&#x6CA1;&#x627E;&#x7740;&#x5C31;return false&#x4E86;</span>
+    <span class="hljs-keyword">for</span> required_layer_name <span class="hljs-keyword">in</span> VALIDATION.required_validation_layers.iter() {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> is_layer_found = <span class="hljs-literal">false</span>;
+
+        <span class="hljs-keyword">for</span> layer_property <span class="hljs-keyword">in</span> layer_properties.iter() {
+            <span class="hljs-keyword">let</span> test_layer_name = vk_to_string(&amp;layer_property.layer_name);
+            <span class="hljs-keyword">if</span> (*required_layer_name) == test_layer_name {
+                is_layer_found = <span class="hljs-literal">true</span>;
+                <span class="hljs-keyword">break</span>;
+            }
+        }
+
+        <span class="hljs-keyword">if</span> is_layer_found == <span class="hljs-literal">false</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+    }
+
+    <span class="hljs-literal">true</span>
+}
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">unsafe</span> <span class="hljs-keyword">extern</span> <span class="hljs-string">&quot;system&quot;</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">vk_debug_callback</span></span>( <span class="hljs-comment">//unsafe extern &quot;system&quot; &#x4E00;&#x770B;&#x5C31;&#x662F;&#x7ED9;C&#x7528;&#x7684;</span>
+    _: vk::DebugReportFlagsEXT,
+    _: vk::DebugReportObjectTypeEXT,
+    _: <span class="hljs-keyword">u64</span>,
+    _: usize,
+    _: <span class="hljs-keyword">i32</span>,
+    _: *<span class="hljs-keyword">const</span> c_char,
+    p_message: *<span class="hljs-keyword">const</span> c_char,
+    _: *<span class="hljs-keyword">mut</span> c_void,
+) -&gt; <span class="hljs-keyword">u32</span> {
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, CStr::from_ptr(p_message)); <span class="hljs-comment">//&#x6253;&#x5370;&#x4E00;&#x4E0B;&#x56DE;&#x8C03;&#x4FE1;&#x606F;</span>
+    vk::FALSE
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">setup_debug_callback</span></span>(
+    entry: &amp;ash::Entry,
+    instance: &amp;ash::Instance,
+) -&gt; (
+    ash::extensions::ext::DebugReport,
+    vk::DebugReportCallbackEXT,
+) {
+    <span class="hljs-keyword">let</span> debug_report_loader = ash::extensions::ext::DebugReport::new(entry, instance); 
+    <span class="hljs-comment">//&#x521B;&#x5EFA;&#x8C03;&#x8BD5;&#x53CD;&#x9988;</span>
+
+    <span class="hljs-keyword">if</span> VALIDATION.is_enable == <span class="hljs-literal">false</span> { <span class="hljs-comment">//&#x770B;&#x770B;&#x5B9E;&#x4F8B;&#x5C42;&#x5F00;&#x7740;&#x6CA1;&#x6709;</span>
+        (debug_report_loader, ash::vk::DebugReportCallbackEXT::null())
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">let</span> debug_create_info = vk::DebugReportCallbackCreateInfoEXT { <span class="hljs-comment">//debug&#x7684;&#x521B;&#x5EFA;&#x4FE1;&#x606F;,&#x4E0B;&#x9762;&#x8FD9;&#x4E2A;&#x7ED3;&#x6784;&#x4F53;&#x662F;&#x4E0D;&#x662F;&#x8DDF;&#x67D0;&#x4E2A;&#x7ED3;&#x6784;&#x4F53;&#x5F88;&#x50CF;?</span>
+            s_type: vk::StructureType::DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+            p_next: ptr::null(),
+            <span class="hljs-comment">//flags&#x6807;&#x6CE8;&#x4E86;&#x8FD9;&#x4E2A;&#x4E1C;&#x897F;&#x5927;&#x6982;&#x9700;&#x8981;&#x5E72;&#x4EC0;&#x4E48;</span>
+            flags: vk::DebugReportFlagsEXT::ERROR <span class="hljs-comment">//&#x62A5;&#x4E2A;&#x9519;</span>
+                    | vk::DebugReportFlagsEXT::INFORMATION <span class="hljs-comment">//&#x7ED9;&#x4E2A;&#x4FE1;&#x606F;</span>
+                    <span class="hljs-comment">//| vk::DebugReportFlagsEXT::DEBUG</span>
+                    | vk::DebugReportFlagsEXT::WARNING <span class="hljs-comment">//&#x62A5;&#x4E2A;&#x8B66;</span>
+                    | vk::DebugReportFlagsEXT::PERFORMANCE_WARNING, <span class="hljs-comment">//&#x6027;&#x80FD;&#x4E0D;&#x8DB3;&#x62A5;&#x4E2A;&#x8B66;</span>
+            pfn_callback: <span class="hljs-literal">Some</span>(vk_debug_callback), <span class="hljs-comment">//&#x56DE;&#x8C03;</span>
+            p_user_data: ptr::null_mut(),
+        };
+
+        <span class="hljs-keyword">let</span> debug_call_back = <span class="hljs-keyword">unsafe</span> {
+            debug_report_loader
+                .create_debug_report_callback(&amp;debug_create_info, <span class="hljs-literal">None</span>)
+                .expect(<span class="hljs-string">&quot;&#x521B;&#x5EFA;&#x8C03;&#x8BD5;&#x56DE;&#x8C03;&#x5931;&#x8D25; &#x539F;&#x56E0;:&quot;</span>)
+        };
+
+        (debug_report_loader, debug_call_back) <span class="hljs-comment">//&#x8FD4;&#x56DE;&#x503C;&#x662F;&#x4E00;&#x4E2A;&#x62A5;&#x544A;&#x548C;&#x4E00;&#x4E2A;&#x56DE;&#x8C03;</span>
+    }
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x91CD;&#x65B0;&#x56DE;&#x5230;<code>vki.rs</code>
+&#x6211;&#x4EEC;&#x9700;&#x8981;&#x628A;&#x6211;&#x4EEC;&#x5199;&#x7684;&#x9A8C;&#x8BC1;&#x5C42;&#x52A0;&#x5165;&#x5230;&#x6211;&#x4EEC;&#x7684;vulkan&#x5B9E;&#x4F8B;&#x4E2D;&#x53BB;
+&#x6240;&#x4EE5;&#x6211;&#x51B3;&#x5B9A;&#x5728;<code>impl VKI</code>&#x91CC;&#x9762;&#x52A0;&#x5165;&#x4E00;&#x4E2A;<code>create_instance</code>,&#x5728;<code>VKI</code>&#x7ED3;&#x6784;&#x4F53;&#x91CC;&#x585E;&#x4E00;&#x4E2A;<code>debug_report</code> &#x548C; <code>debug_callback</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">VKI</span></span> {
+    <span class="hljs-keyword">pub</span> entry: ash::Entry,
+    <span class="hljs-keyword">pub</span> instance: ash::Instance,
+    <span class="hljs-keyword">pub</span> debug_report: ash::extensions::ext::DebugReport,<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+    <span class="hljs-keyword">pub</span> debug_callback: vk::DebugReportCallbackEXT,<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+}
+
+<span class="hljs-keyword">impl</span> VKI{
+
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>() -&gt; VKI {
+        <span class="hljs-keyword">let</span> entry = ash::Entry::new().unwrap();
+        <span class="hljs-keyword">let</span> instance = VKI::create_instance(&amp;entry);
+        <span class="hljs-keyword">let</span> (debug_report, debug_callback) = setup_debug_callback(&amp;entry, &amp;instance); <span class="hljs-comment">//&#x65B0;&#x589E;</span>
+        <span class="hljs-keyword">return</span> VKI {
+            entry: entry,
+            instance: instance,
+            debug_report: debug_report, <span class="hljs-comment">//&#x65B0;&#x589E;</span>
+            debug_callback: debug_callback, <span class="hljs-comment">//&#x65B0;&#x589E;</span>
+        };
+    }
+
+        <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">create_instance</span></span>(entry: &amp;ash::Entry) -&gt; ash::Instance {
+        <span class="hljs-keyword">if</span> VALIDATION.is_enable &amp;&amp; check_validation_layer_support(entry) == <span class="hljs-literal">false</span> {
+            <span class="hljs-built_in">panic!</span>(<span class="hljs-string">&quot;&#x9A8C;&#x8BC1;&#x5C42;&#x4E0D;&#x53EF;&#x7528;!&quot;</span>);
+        }
+
+        <span class="hljs-keyword">let</span> app_name = CString::new(WINDOW_TITLE).unwrap();
+        <span class="hljs-keyword">let</span> engine_name = CString::new(<span class="hljs-string">&quot;Vulkan Engine&quot;</span>).unwrap();
+        <span class="hljs-keyword">let</span> app_info = vk::ApplicationInfo { <span class="hljs-comment">//&#x6211;&#x53D1;&#x73B0;Vulkan&#x7279;&#x522B;&#x559C;&#x6B22;&#x8BA9;&#x6211;&#x4EEC;&#x586B;&#x8868;</span>
+            p_application_name: app_name.as_ptr(),
+            s_type: vk::StructureType::APPLICATION_INFO,
+            p_next: ptr::null(),
+            application_version: APPLICATION_VERSION,
+            p_engine_name: engine_name.as_ptr(),
+            engine_version: ENGINE_VERSION,
+            api_version: API_VERSION,
+        };
+
+        <span class="hljs-comment">//&#x6536;&#x96C6;&#x4E00;&#x4E0B;&#x6269;&#x5C55;&#x7684;&#x540D;&#x5B57;.</span>
+        <span class="hljs-keyword">let</span> extension_names = required_extension_names();
+
+        <span class="hljs-comment">//&#x4FBF;&#x5229;&#x4E00;&#x4E0B;&#x6211;&#x4EEC;&#x5E38;&#x91CF;&#x9700;&#x8981;&#x7684;&#x6269;&#x5C55;</span>
+        <span class="hljs-keyword">let</span> requred_validation_layer_raw_names: <span class="hljs-built_in">Vec</span>&lt;CString&gt; = VALIDATION
+            .required_validation_layers
+            .iter()
+            .map(|layer_name| CString::new(*layer_name).unwrap())
+            .collect();
+        <span class="hljs-comment">//&#x4FBF;&#x5229;&#x4E00;&#x4E0B;&#x6211;&#x4EEC;&#x5F00;&#x7740;&#x7684;&#x6269;&#x5C55;</span>
+        <span class="hljs-keyword">let</span> enable_layer_names: <span class="hljs-built_in">Vec</span>&lt;*<span class="hljs-keyword">const</span> <span class="hljs-keyword">i8</span>&gt; = requred_validation_layer_raw_names
+            .iter()
+            .map(|layer_name| layer_name.as_ptr())
+            .collect();
+
+        <span class="hljs-keyword">let</span> create_info = vk::InstanceCreateInfo {<span class="hljs-comment">//&#x586B;&#x8868;&#x4E0D;&#x89E3;&#x91CA;</span>
+            s_type: vk::StructureType::INSTANCE_CREATE_INFO,
+            p_next: ptr::null(),
+            flags: vk::InstanceCreateFlags::empty(),
+            p_application_info: &amp;app_info,
+            pp_enabled_layer_names: <span class="hljs-keyword">if</span> VALIDATION.is_enable {<span class="hljs-comment">//&#x5982;&#x679C;&#x5F00;&#x7740;&#x9A8C;&#x8BC1;&#x5C42;&#x628A;&#x540D;&#x5B57;&#x544A;&#x8BC9;&#x4ED6;,&#x8981;&#x4E0D;&#x5565;&#x6CA1;&#x6709;</span>
+                enable_layer_names.as_ptr()
+            } <span class="hljs-keyword">else</span> {
+                ptr::null()
+            },
+            enabled_layer_count: <span class="hljs-keyword">if</span> VALIDATION.is_enable {<span class="hljs-comment">//&#x5F00;&#x8FD9;&#x51E0;&#x4E2A;&#x5C42;</span>
+                enable_layer_names.len()
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-number">0</span>
+            } <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+            pp_enabled_extension_names: extension_names.as_ptr(),<span class="hljs-comment">//&#x6269;&#x5C55;&#x7684;&#x540D;&#x5B57;&#x4EEC;</span>
+            enabled_extension_count: extension_names.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,<span class="hljs-comment">//&#x5F00;&#x7740;&#x51E0;&#x4E2A;&#x6269;&#x5C55;</span>
+        };
+
+        <span class="hljs-keyword">let</span> instance: ash::Instance = <span class="hljs-keyword">unsafe</span> {
+            entry
+                .create_instance(&amp;create_info, <span class="hljs-literal">None</span>)
+                .expect(<span class="hljs-string">&quot;&#x521B;&#x5EFA;&#x5B9E;&#x4F8B;&#x5931;&#x8D25;!&quot;</span>)
+        };
+
+        instance
+    }
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x770B;&#x7740;&#x8865;&#x8865;<code>use</code>,&#x8865;&#x5B8C;&#x4E4B;&#x540E;,&#x6211;&#x4EEC;&#x6765;&#x8BB2;&#x4E00;&#x4E0B;&#x4E3A;&#x4EC0;&#x4E48;&#x4F1A;&#x53D1;&#x751F;&#x4E4B;&#x524D;&#x7684;&#x90A3;&#x4E2A;&#x9519;&#x8BEF;
+&#x53EF;&#x80FD;&#x5C31;&#x662F;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;<code>drop</code>&#x7684;&#x65B9;&#x6CD5;&#x4E0D;&#x592A;&#x5BF9;
+&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x6765;&#x91CD;&#x65B0;&#x5199;&#x4E00;&#x4E0B;<code>drop</code>&#x56E0;&#x4E3A;&#x8FD9;&#x6B64;&#x6211;&#x4EEC;&#x8FD8;&#x5E26;&#x4E86;&#x4E00;&#x4E2A;&#x9A8C;&#x8BC1;&#x5C42;,&#x6240;&#x4EE5;,&#x6709;&#x4EC0;&#x4E48;&#x9519;&#x8BEF;&#x4ED6;&#x4F1A;&#x544A;&#x8BC9;&#x54B1;&#x7684;
+&#x6211;&#x76F8;&#x4FE1;&#x5927;&#x5BB6;&#x77E5;&#x9053;&#x8981;&#x6539;&#x7684;&#x662F;&#x90A3;&#x4E2A;&#x6587;&#x4EF6;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> <span class="hljs-built_in">Drop</span> <span class="hljs-keyword">for</span> VKI {
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">drop</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {
+        <span class="hljs-keyword">unsafe</span> {
+            <span class="hljs-keyword">if</span> VALIDATION.is_enable {
+                <span class="hljs-keyword">self</span>.debug_report
+                    .destroy_debug_report_callback(<span class="hljs-keyword">self</span>.debug_callback, <span class="hljs-literal">None</span>);
+            }
+            <span class="hljs-keyword">self</span>.instance.destroy_instance(<span class="hljs-literal">None</span>);
+        }
+    }
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x5C1D;&#x8BD5;&#x8FD0;&#x884C;&#x4E00;&#x4E0B;&#x770B;&#x770B;&#x6709;&#x4EC0;&#x4E48;&#x4F1A;&#x88AB;&#x6253;&#x5370;&#x51FA;&#x6765;<code>cargo run</code></p>
+<p>&#x5DEE;&#x4E0D;&#x591A;&#x4EE5;&#x4E0B;&#x5185;&#x5BB9;&#x5C31;&#x8BC1;&#x660E;&#x4F60;&#x5199;&#x7684;&#x8FD8;&#x51D1;&#x5408;</p>
+<pre><code>Instance Available Layers:
+        VK_LAYER_NV_optimus
+        VK_LAYER_VALVE_steam_overlay
+        VK_LAYER_VALVE_steam_fossilize
+        VK_LAYER_LUNARG_standard_validation
+</code></pre><p>&#x5173;&#x95ED;&#x7A97;&#x53E3;&#x540E;,&#x6CA1;&#x6709;&#x62A5;&#x9519;
+&#x6211;&#x89C9;&#x5F97;&#x8FD9;&#x7AE0;&#x5199;&#x5230;&#x8FD9;&#x91CC;&#x5C31;&#x884C;&#x4E86;,&#x5927;&#x5BB6;&#x8D76;&#x7D27;&#x53BB;&#x6284;&#x6284;&#x4EE3;&#x7801;</p>
+<p>&#x540E;&#x9762;&#x7684;&#x7AE0;&#x8282;&#x5C06;&#x4F1A;&#x8D8A;&#x6765;&#x8D8A;&#x96BE;&#x7406;&#x89E3;,&#x8FD8;&#x662F;&#x9F13;&#x52B1;&#x4E00;&#x4E0B;&#x5427;</p>
 
                                 
                                 </section>
@@ -487,7 +727,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1.2 配置validation_layer","level":"1.4.3","depth":2,"next":{"title":"1.3 选择物理设备","level":"1.4.4","depth":2,"path":"画个三角形吧/1.3选择物理设备.md","ref":"画个三角形吧/1.3选择物理设备.md","articles":[]},"previous":{"title":"1.1 创建实例","level":"1.4.2","depth":2,"path":"画个三角形吧/1.1创建实例.md","ref":"画个三角形吧/1.1创建实例.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.2配置validation_layer.md","mtime":"2019-03-21T22:41:43.530Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-03-21T22:55:53.988Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"1.2 配置validation_layer","level":"1.4.3","depth":2,"next":{"title":"1.3 选择物理设备","level":"1.4.4","depth":2,"path":"画个三角形吧/1.3选择物理设备.md","ref":"画个三角形吧/1.3选择物理设备.md","articles":[]},"previous":{"title":"1.1 创建实例","level":"1.4.2","depth":2,"path":"画个三角形吧/1.1创建实例.md","ref":"画个三角形吧/1.1创建实例.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.2配置validation_layer.md","mtime":"2019-03-22T23:59:27.447Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-03-23T00:02:00.714Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
