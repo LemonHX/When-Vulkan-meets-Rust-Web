@@ -640,7 +640,186 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="14">1.4</h1>
+                                <h1 id="14-&#x4EBA;&#x4E8B;&#x4F60;&#x7ED9;&#x90A3;&#x4E2A;&#x7EFF;&#x80D6;&#x5B50;&#x627E;&#x4E2A;&#x6D3B;&#x513F;&#x5E72;">1.4 &#x4EBA;&#x4E8B;!&#x4F60;&#x7ED9;&#x90A3;&#x4E2A;&#x7EFF;&#x80D6;&#x5B50;&#x627E;&#x4E2A;&#x6D3B;&#x513F;&#x5E72;!</h1>
+<p>&#x6211;&#x4EEC;&#x5728;&#x6709;&#x4E86;&#x7269;&#x7406;&#x8BBE;&#x5907;&#x4EE5;&#x540E;,&#x6211;&#x4EEC;&#x662F;&#x4E0D;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x7528;&#x7684;,&#x5C31;&#x6BD4;&#x5982;&#x5728;&#x5DE5;&#x4F5C;&#x5C97;&#x4F4D;&#x4E0A;,&#x5F80;&#x5F80;&#x6709;&#x4EBA;&#x4E8B;&#x8FD9;&#x4E2A;&#x90E8;&#x95E8;&#x4E00;&#x6837;,&#x903B;&#x8F91;&#x8BBE;&#x5907;&#x5C31;&#x597D;&#x6BD4;&#x662F;&#x5DE5;&#x4F5C;&#x5C97;&#x4F4D;&#x7684;&#x4EBA;&#x4E8B;&#x90E8;&#x95E8;,&#x7BA1;&#x7740;GPU&#x5177;&#x4F53;&#x8BE5;&#x5E72;&#x4EC0;&#x4E48;</p>
+<p>&#x53EF;&#x4EE5;&#x8BA9;&#x4E00;&#x4E2A;GPU&#x5E72;&#x591A;&#x4EFD;&#x5DE5;&#x4F5C;&#x5417;?</p>
+<p>&#x4F60;&#x4E0A;&#x73ED;&#x4F1A;&#x9047;&#x5230;SB&#x9886;&#x5BFC;&#x561B;?</p>
+<p>&#x7B54;&#x6848;&#x662F;&#x53EF;&#x4EE5;&#x7684;,&#x4E00;&#x4E2A;GPU&#x53EF;&#x4EE5;&#x5E72;&#x5F88;&#x591A;&#x4EFD;&#x5DE5;&#x4F5C;.</p>
+<p>&#x5728;&#x4E0A;&#x4E00;&#x7BC7;&#x6559;&#x7A0B;&#x91CC;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x67E5;&#x8BE2;&#x4E86;&#x6709;&#x54EA;&#x4E9B;GPU(&#x5E72;&#x6D3B;&#x7684;)&#x53EF;&#x4EE5;&#x7528;,&#x6709;&#x54EA;&#x4E9B;&#x961F;&#x5217;&#x5BB6;&#x65CF;&#x53EF;&#x4EE5;&#x7528;,&#x8FD9;&#x56DE;&#x6211;&#x4EEC;&#x6765;&#x7ED9;&#x4ED6;&#x4EEC;&#x5B89;&#x6392;&#x5230;&#x4EBA;&#x4E8B;&#x90E8;.</p>
+<p>&#x5728;<code>app</code>&#x4E0B;&#x521B;&#x5EFA;<code>logical_device.rs</code>&#x5E76;&#x52A0;&#x5165;<code>mod.rs</code></p>
+<pre><code class="lang-rust">
+<span class="hljs-keyword">use</span> super::validation::*;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> ash::version::DeviceV1_0;
+<span class="hljs-keyword">use</span> std::ffi::CString;
+<span class="hljs-keyword">use</span> std::ptr;
+<span class="hljs-keyword">use</span> std::os::raw::c_char;
+
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">QueueFamilyIndices</span></span> {
+    <span class="hljs-comment">//&#x8FD9;&#x4E2A;&#x961F;&#x5217;&#x5BB6;&#x65CF;&#x6709;&#x51E0;&#x53F7;&#x4EBA;</span>
+    <span class="hljs-keyword">pub</span> graphics_family: <span class="hljs-keyword">i32</span>,
+}
+
+<span class="hljs-keyword">impl</span> QueueFamilyIndices {
+    <span class="hljs-comment">//&#x5982;&#x679C;&#x4E0D;&#x662F;&#x6CA1;&#x4EBA;&#x5C31;ok</span>
+    <span class="hljs-comment">//&#x6CA1;&#x4EBA;&#x8BC1;&#x660E;&#x4F60;&#x7684;&#x663E;&#x5361;&#x7684;&#x9A71;&#x52A8;&#x574F;&#x4E86;&#x6216;&#x8005;&#x663E;&#x5361;&#x8BE5;&#x6362;&#x4E86;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">is_complete</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-keyword">bool</span> {
+        <span class="hljs-keyword">self</span>.graphics_family &gt;= <span class="hljs-number">0</span>
+    }
+}
+<span class="hljs-comment">//&#x521B;&#x5EFA;&#x903B;&#x8F91;&#x8BBE;&#x5907;</span>
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">create_logical_device</span></span>(
+        instance: &amp;ash::Instance,
+        physical_device: vk::PhysicalDevice,
+        validation: &amp;ValidationInfo,
+    ) -&gt; (ash::Device, vk::Queue) {
+        <span class="hljs-comment">//&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x5728;&#x4E0B;&#x9762;&#x2193;</span>
+        <span class="hljs-keyword">let</span> indices = find_queue_family(instance, physical_device);
+
+        <span class="hljs-keyword">let</span> queue_priorities = [<span class="hljs-number">1.0_f32</span>];
+        <span class="hljs-comment">//&#x5C31;&#x548C;&#x4EBA;&#x4E8B;&#x586B;&#x59D3;&#x540D;&#x5E74;&#x9F84;&#x4E00;&#x6837;,&#x586B;&#x4E0A;&#x961F;&#x5217;&#x7684;&#x8868;(&#x8FD9;&#x662F;&#x4E2A;&#x4EC0;&#x4E48;&#x4E0D;&#x6B63;&#x7ECF;&#x7684;&#x961F;&#x5217;,&#x8FC7;&#x6765;&#x5E72;&#x86E4;&#x7684;)</span>
+        <span class="hljs-keyword">let</span> queue_create_info = vk::DeviceQueueCreateInfo {
+            s_type: vk::StructureType::DEVICE_QUEUE_CREATE_INFO,
+            p_next: ptr::null(),
+            flags: vk::DeviceQueueCreateFlags::empty(),
+            queue_family_index: indices.graphics_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+            p_queue_priorities: queue_priorities.as_ptr(),
+            queue_count: queue_priorities.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+        };
+        <span class="hljs-comment">//&#x6307;&#x5B9A;&#x7279;&#x6027;</span>
+        <span class="hljs-keyword">let</span> physical_device_features = vk::PhysicalDeviceFeatures {
+            ..<span class="hljs-built_in">Default</span>::default() 
+            <span class="hljs-comment">//&#x9ED8;&#x8BA4;&#x4E0D;&#x5F00;&#x540A;&#x70B8;&#x5929;&#x7684;&#x4EFB;&#x4F55;&#x7279;&#x6027;</span>
+        };
+
+        <span class="hljs-keyword">let</span> requred_validation_layer_raw_names: <span class="hljs-built_in">Vec</span>&lt;CString&gt; = validation
+            .required_validation_layers
+            .iter()
+            .map(|layer_name| CString::new(*layer_name).unwrap())
+            .collect();
+        <span class="hljs-keyword">let</span> enable_layer_names: <span class="hljs-built_in">Vec</span>&lt;*<span class="hljs-keyword">const</span> c_char&gt; = requred_validation_layer_raw_names
+            .iter()
+            .map(|layer_name| layer_name.as_ptr())
+            .collect();
+
+        <span class="hljs-comment">//&#x663E;&#x5361;&#x7684;&#x59D3;&#x540D;,&#x5E74;&#x9F84;,&#x5BB6;&#x5C5E;&#x8868;&#x586B;&#x4E00;&#x586B;</span>
+        <span class="hljs-keyword">let</span> device_create_info = vk::DeviceCreateInfo {
+            s_type: vk::StructureType::DEVICE_CREATE_INFO,
+            p_next: ptr::null(),
+            flags: vk::DeviceCreateFlags::empty(),
+            queue_create_info_count: <span class="hljs-number">1</span>,
+            p_queue_create_infos: &amp;queue_create_info,
+            enabled_layer_count: <span class="hljs-keyword">if</span> validation.is_enable {
+                enable_layer_names.len()
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-number">0</span>
+            } <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+            pp_enabled_layer_names: <span class="hljs-keyword">if</span> validation.is_enable {
+                enable_layer_names.as_ptr()
+            } <span class="hljs-keyword">else</span> {
+                ptr::null()
+            },
+            enabled_extension_count: <span class="hljs-number">0</span>,
+            pp_enabled_extension_names: ptr::null(),
+            p_enabled_features: &amp;physical_device_features,
+        };
+        <span class="hljs-comment">//&#x6839;&#x636E;&#x4EE5;&#x4E0A;&#x4FE1;&#x606F;&#x521B;&#x5EFA;&#x8FD9;&#x4E2A;&#x663E;&#x5361;&#x7684;&#x903B;&#x8F91;&#x8BBE;&#x5907;</span>
+        <span class="hljs-comment">//&#x663E;&#x5361;&#x6B63;&#x5F0F;&#x5165;&#x804C;</span>
+        <span class="hljs-keyword">let</span> device: ash::Device = <span class="hljs-keyword">unsafe</span> {
+            instance
+                .create_device(physical_device, &amp;device_create_info, <span class="hljs-literal">None</span>)
+                .expect(<span class="hljs-string">&quot;Failed to create logical Device!&quot;</span>)
+        };
+
+        <span class="hljs-keyword">let</span> graphics_queue = <span class="hljs-keyword">unsafe</span> { device.get_device_queue(indices.graphics_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>, <span class="hljs-number">0</span>) };
+
+        (device, graphics_queue)
+    }
+
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">find_queue_family</span></span>(
+        instance: &amp;ash::Instance,
+        physical_device: vk::PhysicalDevice,
+    ) -&gt; QueueFamilyIndices {
+        <span class="hljs-keyword">let</span> queue_families =
+            <span class="hljs-keyword">unsafe</span> { instance.get_physical_device_queue_family_properties(physical_device) };
+
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> queue_family_indices = QueueFamilyIndices {
+            graphics_family: -<span class="hljs-number">1</span>,
+        };
+
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> index = <span class="hljs-number">0</span>;
+        <span class="hljs-comment">//&#x904D;&#x5386;&#x5E76;&#x8BA1;&#x6570;</span>
+        <span class="hljs-keyword">for</span> queue_family <span class="hljs-keyword">in</span> queue_families.iter() {
+            <span class="hljs-keyword">if</span> queue_family.queue_count &gt; <span class="hljs-number">0</span>
+                &amp;&amp; queue_family.queue_flags.contains(vk::QueueFlags::GRAPHICS)
+            {
+                queue_family_indices.graphics_family = index;
+            }
+
+            <span class="hljs-keyword">if</span> queue_family_indices.is_complete() {
+                <span class="hljs-keyword">break</span>;
+            }
+
+            index += <span class="hljs-number">1</span>;
+        }
+
+        queue_family_indices
+    }
+</code></pre>
+<p>&#x4E14;&#x6162;,&#x8FD8;&#x4E0D;&#x7B97;&#x5B8C;,&#x6211;&#x4EEC;&#x8FD8;&#x9700;&#x8981;&#x628A;&#x8FD9;&#x4E2A;&#x653E;&#x5230;&#x6211;&#x4EEC;&#x7684;vulkan&#x5B9E;&#x4F8B;<code>vki.rs</code>&#x4E2D;&#x53BB;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">VKI</span></span> {
+    <span class="hljs-keyword">pub</span> entry: ash::Entry,
+    <span class="hljs-keyword">pub</span> instance: ash::Instance,
+    <span class="hljs-keyword">pub</span> debug_report: ash::extensions::ext::DebugReport,
+    <span class="hljs-keyword">pub</span> debug_callback: vk::DebugReportCallbackEXT,
+    <span class="hljs-keyword">pub</span> physical_device: vk::PhysicalDevice,
+    <span class="hljs-keyword">pub</span> logical_device: ash::Device,<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+    <span class="hljs-keyword">pub</span> graphics_queue: vk::Queue,<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+}
+
+<span class="hljs-keyword">impl</span> VKI {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>() -&gt; VKI {
+        <span class="hljs-keyword">let</span> entry = ash::Entry::new().unwrap();
+        <span class="hljs-keyword">let</span> instance = create_instance(
+            &amp;entry,
+            WINDOW_TITLE,
+            VALIDATION.is_enable,
+            &amp;VALIDATION.required_validation_layers.to_vec(),
+        );
+        <span class="hljs-keyword">let</span> (debug_report, debug_callback) = setup_debug_callback(&amp;entry, &amp;instance);
+        <span class="hljs-keyword">let</span> physical_device = pick_physical_device(&amp;instance);
+        <span class="hljs-keyword">let</span> (logical_device, graphics_queue) =
+            create_logical_device(&amp;instance, physical_device, &amp;VALIDATION); <span class="hljs-comment">//&#x65B0;&#x589E;</span>
+        <span class="hljs-keyword">return</span> VKI {
+            entry: entry,
+            instance: instance,
+            debug_report: debug_report,
+            debug_callback: debug_callback,
+            physical_device: physical_device,
+            logical_device:logical_device,
+            graphics_queue:graphics_queue,
+        };
+    }
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x8FD8;&#x9700;&#x8981;&#x51C6;&#x5907;&#x4E00;&#x5957;&#x65B9;&#x6CD5;&#x6765;&#x89E3;&#x96C7;<code>drop</code>&#x8FD9;&#x7FA4;&#x663E;&#x5361;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">impl</span> <span class="hljs-built_in">Drop</span> <span class="hljs-keyword">for</span> VKI {
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">drop</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {
+        <span class="hljs-keyword">unsafe</span> {
+            <span class="hljs-keyword">self</span>.logical_device.destroy_device(<span class="hljs-literal">None</span>);<span class="hljs-comment">//&#x65B0;&#x589E;</span>
+            <span class="hljs-keyword">if</span> VALIDATION.is_enable {
+                <span class="hljs-keyword">self</span>.debug_report
+                    .destroy_debug_report_callback(<span class="hljs-keyword">self</span>.debug_callback, <span class="hljs-literal">None</span>);
+            }
+            <span class="hljs-keyword">self</span>.instance.destroy_instance(<span class="hljs-literal">None</span>);
+        }
+    }
+}
+</code></pre>
+<p>&#x73B0;&#x5728;&#x9879;&#x76EE;&#x7ED3;&#x6784;&#x5DF2;&#x7ECF;&#x4E71;&#x6210;&#x4E00;&#x9505;&#x7CA5;&#x4E86;,&#x6240;&#x4EE5;&#x6211;&#x987A;&#x4FBF;&#x8C03;&#x6574;&#x4E86;&#x4E0B;&#x9879;&#x76EE;&#x7ED3;&#x6784;
+&#x8FD9;&#x4E2A;&#x53EF;&#x4EE5;&#x5728; When-Rust-meets-Vulkan-Codes&#x4E2D;1.4&#x627E;&#x5230;,&#x8FD9;&#x4E2A;&#x5C31;&#x4E0D;&#x8BB2;&#x4E86;
+&#x81EA;&#x884C;&#x8C03;&#x6574;&#x5427;.</p>
 
                                 
                                 </section>
@@ -684,7 +863,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1.4 创建逻辑设备","level":"1.5.5","depth":2,"next":{"title":"1.5 窗口表面","level":"1.5.6","depth":2,"path":"画个三角形吧/1.5窗口表面.md","ref":"画个三角形吧/1.5窗口表面.md","articles":[]},"previous":{"title":"1.3 选择物理设备","level":"1.5.4","depth":2,"path":"画个三角形吧/1.3选择物理设备.md","ref":"画个三角形吧/1.3选择物理设备.md","articles":[]},"dir":"neutral"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.4创建逻辑设备.md","mtime":"2019-03-21T09:35:30.750Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-03-28T12:24:20.518Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"1.4 创建逻辑设备","level":"1.5.5","depth":2,"next":{"title":"1.5 窗口表面","level":"1.5.6","depth":2,"path":"画个三角形吧/1.5窗口表面.md","ref":"画个三角形吧/1.5窗口表面.md","articles":[]},"previous":{"title":"1.3 选择物理设备","level":"1.5.4","depth":2,"path":"画个三角形吧/1.3选择物理设备.md","ref":"画个三角形吧/1.3选择物理设备.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.4创建逻辑设备.md","mtime":"2019-04-05T03:07:23.046Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-05T03:11:20.493Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -692,10 +871,6 @@
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
