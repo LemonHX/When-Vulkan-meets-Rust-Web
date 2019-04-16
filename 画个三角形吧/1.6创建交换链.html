@@ -641,6 +641,430 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="16-&#x521B;&#x5EFA;&#x4EA4;&#x6362;&#x94FE;">1.6 &#x521B;&#x5EFA;&#x4EA4;&#x6362;&#x94FE;</h1>
+<p>(&#x52A0;&#x5165;&#x6211;Rust&#x56FE;&#x5F62;&#x5B66;&#x7FA4;&#x56DE;&#x7B54;&#x4E0D;&#x4E0A;&#x6765;&#x5165;&#x7FA4;&#x95EE;&#x9898;&#x7684;&#x83DC;&#x9E21;&#x4EEC;&#x6CE8;&#x610F;&#x4E86;!)
+&#x56E0;&#x4E3A;&#x4EA4;&#x6362;&#x94FE;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x786E;&#x5207;&#x7684;&#x7A97;&#x53E3;&#x5927;&#x5C0F;,&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x628A;&#x7A97;&#x53E3;&#x5927;&#x5C0F;&#x5199;&#x8FDB;<code>consts.rs</code>,&#x53EF;&#x80FD;&#x6709;&#x4EBA;&#x8981;&#x95EE;&#x4E86;&#x4EC0;&#x4E48;&#x662F;&#x4EA4;&#x6362;&#x94FE;?
+<img src="1.6.1.png" alt="SwapChain">
+&#x8FD9;&#x4E2A;&#x56FE;&#x5927;&#x6982;&#x80FD;&#x5B8C;&#x6574;&#x7684;&#x6982;&#x62EC;&#x672C;&#x7AE0;&#x8282;&#x7684;&#x5185;&#x5BB9;.
+SwapChain&#x5C31;&#x662F;&#x4E00;&#x5806;&#x56FE;&#x7247;,&#x4F5C;&#x7528;&#x5462;&#x5C31;&#x662F;&#x4E07;&#x4E00;&#x663E;&#x5361;&#x6CA1;&#x8DDF;&#x4E0A;,&#x6216;&#x8005;&#x663E;&#x5361;&#x592A;&#x5FEB;&#x4E86;,&#x8BA9;&#x7528;&#x6237;&#x611F;&#x89C9;&#x753B;&#x9762;&#x6CA1;&#x6709;&#x4EC0;&#x4E48;&#x5B9E;&#x8D28;&#x6027;&#x7684;&#x53D8;&#x5316;&#x7684;&#x4E00;&#x4E2A;&#x5DE5;&#x5177;,&#x4ECE;&#x67D0;&#x79CD;&#x610F;&#x4E49;&#x4E0A;&#x964D;&#x4F4E;&#x4E86;&#x5361;&#x987F;&#x7684;&#x611F;&#x89C9;.</p>
+<p>&#x6211;&#x4EEC;&#x5148;&#x6765;&#x5427;SwapChain&#x91CC;&#x7684;&#x56FE;&#x50CF;&#x5927;&#x5927;&#x5C0F;(&#x4E5F;&#x5C31;&#x662F;&#x7A97;&#x53E3;&#x7684;&#x5927;&#x5C0F;)&#x89C4;&#x5B9A;&#x597D;,&#x4F60;&#x53EF;&#x4E0D;&#x60F3;&#x770B;&#x89C1;&#x5E26;&#x9ED1;&#x8FB9;&#x7684;&#x56FE;&#x50CF;&#x5427;!</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> WINDOW_WIDTH: <span class="hljs-keyword">u32</span> = <span class="hljs-number">800</span>;
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> WINDOW_HEIGHT: <span class="hljs-keyword">u32</span> = <span class="hljs-number">600</span>;
+</code></pre>
+<p>&#x7136;&#x540E;&#x5BF9;<code>app.rs</code>&#x8FDB;&#x884C;&#x64CD;&#x4F5C;,&#x56FA;&#x5B9A;&#x7A97;&#x53E3;&#x5927;&#x5C0F;,&#x81EA;&#x5DF1;use&#x4E00;&#x4E0B;</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> window = window_create(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, &amp;ev);
+</code></pre>
+<p>&#x770B;&#x56FE;,&#x4F60;&#x4F1A;&#x53D1;&#x73B0;&#x8FD9;&#x4E2A;SwapChain&#x5BF9;Logical Device&#x662F;&#x5F3A;&#x4F9D;&#x8D56;&#x7684;,&#x5728;&#x8FD9;&#x91CC;&#x9700;&#x8981;&#x6539;&#x592A;&#x591A;&#x4E1C;&#x897F;&#x4E86;,&#x6211;&#x4E00;&#x70B9;&#x4E00;&#x70B9;&#x6765;&#x8BB2;&#x4E00;&#x8BB2;</p>
+<ol>
+<li>&#x5728;<code>QueueFamilyIndices</code>&#x6DFB;&#x52A0;<code>present_family</code>&#x9879;(&#x5F53;&#x524D;&#x5BB6;&#x65CF;(&#x6709;&#x4EBA;&#x544A;&#x8BC9;&#x6211;&#x4E2D;&#x6587;&#x7FFB;&#x8BD1;&#x53EB;&#x7C07;))</li>
+<li>&#x66F4;&#x65B0;<code>impl</code></li>
+<li>&#x68C0;&#x67E5;&#x5F53;&#x524D;&#x8BBE;&#x5907;&#x652F;&#x4E0D;&#x652F;&#x6301;&#x6211;&#x4EEC;&#x8981;&#x7684;&#x4EA4;&#x6362;&#x94FE;&#x6269;&#x5C55;</li>
+</ol>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> super::validation::*;
+
+<span class="hljs-keyword">use</span> super::surface::*;
+<span class="hljs-keyword">use</span> ash::version::DeviceV1_0;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> std::ffi::CString;
+<span class="hljs-keyword">use</span> std::os::raw::c_char;
+<span class="hljs-keyword">use</span> std::ptr;
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">QueueFamilyIndices</span></span> {
+    <span class="hljs-keyword">pub</span> graphics_family: <span class="hljs-keyword">i32</span>,
+    <span class="hljs-keyword">pub</span> present_family: <span class="hljs-keyword">i32</span>,
+}
+
+<span class="hljs-keyword">impl</span> QueueFamilyIndices {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>() -&gt; QueueFamilyIndices {
+        QueueFamilyIndices {
+            graphics_family: -<span class="hljs-number">1</span>,
+            present_family: -<span class="hljs-number">1</span>,
+        }
+    }
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">is_complete</span></span>(&amp;<span class="hljs-keyword">self</span>) -&gt; <span class="hljs-keyword">bool</span> {
+        <span class="hljs-keyword">self</span>.graphics_family &gt;= <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">self</span>.present_family &gt;= <span class="hljs-number">0</span>
+    }
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">create_logical_device</span></span>(
+    instance: &amp;ash::Instance,
+    physical_device: vk::PhysicalDevice,
+    validation: &amp;ValidationInfo,
+    surface_stuff: &amp;SurfaceStuff,
+) -&gt; (ash::Device, QueueFamilyIndices) {
+    <span class="hljs-keyword">let</span> indices = find_queue_family(instance, physical_device, surface_stuff);
+
+    <span class="hljs-keyword">use</span> std::collections::HashSet;
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> unique_queue_families = HashSet::new();
+    unique_queue_families.insert(indices.graphics_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>);
+    unique_queue_families.insert(indices.present_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>);
+
+    <span class="hljs-keyword">let</span> queue_priorities = [<span class="hljs-number">1.0_f32</span>];
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> queue_create_infos = <span class="hljs-built_in">vec!</span>[];
+    <span class="hljs-keyword">for</span> &amp;queue_family <span class="hljs-keyword">in</span> unique_queue_families.iter() {
+        <span class="hljs-keyword">let</span> queue_create_info = vk::DeviceQueueCreateInfo {
+            s_type: vk::StructureType::DEVICE_QUEUE_CREATE_INFO,
+            p_next: ptr::null(),
+            flags: vk::DeviceQueueCreateFlags::empty(),
+            queue_family_index: queue_family,
+            p_queue_priorities: queue_priorities.as_ptr(),
+            queue_count: queue_priorities.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+        };
+        queue_create_infos.push(queue_create_info);
+    }
+
+    <span class="hljs-keyword">let</span> physical_device_features = vk::PhysicalDeviceFeatures {
+        ..<span class="hljs-built_in">Default</span>::default() <span class="hljs-comment">// default just enable no feature.</span>
+    };
+
+    <span class="hljs-keyword">let</span> requred_validation_layer_raw_names: <span class="hljs-built_in">Vec</span>&lt;CString&gt; = validation
+        .required_validation_layers
+        .iter()
+        .map(|layer_name| CString::new(*layer_name).unwrap())
+        .collect();
+    <span class="hljs-keyword">let</span> enable_layer_names: <span class="hljs-built_in">Vec</span>&lt;*<span class="hljs-keyword">const</span> c_char&gt; = requred_validation_layer_raw_names
+        .iter()
+        .map(|layer_name| layer_name.as_ptr())
+        .collect();
+
+    <span class="hljs-keyword">let</span> enable_extension_names = [
+        ash::extensions::khr::Swapchain::name().as_ptr(), <span class="hljs-comment">// currently just enable the Swapchain extension.</span>
+    ];
+
+    <span class="hljs-keyword">let</span> device_create_info = vk::DeviceCreateInfo {
+        s_type: vk::StructureType::DEVICE_CREATE_INFO,
+        p_next: ptr::null(),
+        flags: vk::DeviceCreateFlags::empty(),
+        queue_create_info_count: queue_create_infos.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+        p_queue_create_infos: queue_create_infos.as_ptr(),
+        enabled_layer_count: <span class="hljs-keyword">if</span> validation.is_enable {
+            enable_layer_names.len()
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-number">0</span>
+        } <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+        pp_enabled_layer_names: <span class="hljs-keyword">if</span> validation.is_enable {
+            enable_layer_names.as_ptr()
+        } <span class="hljs-keyword">else</span> {
+            ptr::null()
+        },
+        enabled_extension_count: enable_extension_names.len() <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+        pp_enabled_extension_names: enable_extension_names.as_ptr(),
+        p_enabled_features: &amp;physical_device_features,
+    };
+
+    <span class="hljs-keyword">let</span> device: ash::Device = <span class="hljs-keyword">unsafe</span> {
+        instance
+            .create_device(physical_device, &amp;device_create_info, <span class="hljs-literal">None</span>)
+            .expect(<span class="hljs-string">&quot;Failed to create logical device!&quot;</span>)
+    };
+
+    (device, indices)
+}
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">find_queue_family</span></span>(
+    instance: &amp;ash::Instance,
+    physical_device: vk::PhysicalDevice,
+    surface_stuff: &amp;SurfaceStuff,
+) -&gt; QueueFamilyIndices {
+    <span class="hljs-keyword">let</span> queue_families =
+        <span class="hljs-keyword">unsafe</span> { instance.get_physical_device_queue_family_properties(physical_device) };
+
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> queue_family_indices = QueueFamilyIndices::new();
+
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> index = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> queue_family <span class="hljs-keyword">in</span> queue_families.iter() {
+        <span class="hljs-keyword">if</span> queue_family.queue_count &gt; <span class="hljs-number">0</span>
+            &amp;&amp; queue_family.queue_flags.contains(vk::QueueFlags::GRAPHICS)
+        {
+            queue_family_indices.graphics_family = index;
+        }
+
+        <span class="hljs-keyword">let</span> is_present_support = <span class="hljs-keyword">unsafe</span> {
+            surface_stuff
+                .surface_loader
+                .get_physical_device_surface_support(
+                    physical_device,
+                    index <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+                    surface_stuff.surface,
+                )
+        };
+        <span class="hljs-keyword">if</span> queue_family.queue_count &gt; <span class="hljs-number">0</span> &amp;&amp; is_present_support {
+            queue_family_indices.present_family = index;
+        }
+
+        <span class="hljs-keyword">if</span> queue_family_indices.is_complete() {
+            <span class="hljs-keyword">break</span>;
+        }
+
+        index += <span class="hljs-number">1</span>;
+    }
+
+    queue_family_indices
+}
+</code></pre>
+<p>&#x5927;&#x5BB6;&#x76F4;&#x63A5;&#x6284;&#x5427;,&#x4F60;&#x7684;&#x7F16;&#x8F91;&#x5668;&#x4F1A;&#x544A;&#x8BC9;&#x4F60;&#x54EA;&#x91CC;&#x6709;&#x6539;&#x52A8;(&#x5982;&#x679C;git&#x505A;&#x7684;&#x59A5;&#x5F53;&#x7684;&#x8BDD;)</p>
+<p>&#x597D;,&#x8FDB;&#x5165;&#x4E3B;&#x9898;,&#x5F00;&#x59CB;&#x521B;&#x5EFA;SwapChain,&#x65B0;&#x5EFA;&#x6587;&#x4EF6;<code>swapchain.rs</code></p>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> super::consts::*;
+<span class="hljs-keyword">use</span> super::logical_device::*;
+<span class="hljs-keyword">use</span> super::surface::*;
+<span class="hljs-keyword">use</span> super::validation::*;
+<span class="hljs-keyword">use</span> ash::version::DeviceV1_0;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> std::ffi::CString;
+<span class="hljs-keyword">use</span> std::os::raw::c_char;
+<span class="hljs-keyword">use</span> std::ptr;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SwapChainStuff</span></span> {
+    <span class="hljs-keyword">pub</span> swapchain_loader: ash::extensions::khr::Swapchain,
+    <span class="hljs-comment">//&#x8DDF;&#x4E0A;&#x56DE;&#x7684;loader&#x4E00;&#x6837;,&#x63D0;&#x4F9B;&#x4E86;&#x5F88;&#x591A;&#x6709;&#x7528;&#x7684;&#x51FD;&#x6570;</span>
+    <span class="hljs-keyword">pub</span> swapchain: vk::SwapchainKHR,
+    <span class="hljs-comment">//swapchain&#x5B9E;&#x4F53;</span>
+    <span class="hljs-keyword">pub</span> swapchain_images: <span class="hljs-built_in">Vec</span>&lt;vk::Image&gt;,
+    <span class="hljs-comment">//&#x52A0;&#x7FA4;&#x7684;&#x5C0F;&#x4F19;&#x4F34;&#x6CE8;&#x610F;&#x4E86;</span>
+    <span class="hljs-keyword">pub</span> swapchain_format: vk::Format,
+    <span class="hljs-keyword">pub</span> swapchain_extent: vk::Extent2D,
+    <span class="hljs-comment">//extent&#x683C;&#x5F0F;,&#x56E0;&#x4E3A;&#x4E09;&#x89D2;&#x5F62;&#x662F;2D&#x56FE;&#x50CF;,&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x7528;&#x4E0D;&#x7740;3D</span>
+}
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">SwapChainSupportDetail</span></span> {
+    <span class="hljs-comment">//&#x66F4;&#x591A;&#x652F;&#x6301;&#x7684;&#x7EC6;&#x8282;&#x4FE1;&#x606F;</span>
+    capabilities: vk::SurfaceCapabilitiesKHR,
+    formats: <span class="hljs-built_in">Vec</span>&lt;vk::SurfaceFormatKHR&gt;,
+    present_modes: <span class="hljs-built_in">Vec</span>&lt;vk::PresentModeKHR&gt;,
+}
+
+<span class="hljs-comment">//&#x521B;&#x5EFA;SwapChain</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">create_swapchain</span></span>(
+    instance: &amp;ash::Instance,
+    device: &amp;ash::Device,
+    physical_device: vk::PhysicalDevice,
+    surface_stuff: &amp;SurfaceStuff,
+    queue_family: &amp;QueueFamilyIndices,
+) -&gt; SwapChainStuff {
+    <span class="hljs-keyword">let</span> swapchain_support = query_swapchain_support(physical_device, surface_stuff);
+    <span class="hljs-comment">//&#x5BFB;&#x627E;&#x652F;&#x6301;</span>
+
+    <span class="hljs-keyword">let</span> surface_format = choose_swapchain_format(&amp;swapchain_support.formats);
+    <span class="hljs-comment">//&#x8BBE;&#x7F6E;swapchain&#x683C;&#x5F0F;</span>
+    <span class="hljs-keyword">let</span> present_mode = choose_swapchain_present_mode(&amp;swapchain_support.present_modes);
+    <span class="hljs-comment">//&#x8BBE;&#x7F6E;&#x5F53;&#x524D;&#x7684;&#x683C;&#x5F0F;</span>
+    <span class="hljs-keyword">let</span> extent = choose_swapchain_extent(&amp;swapchain_support.capabilities);
+    <span class="hljs-comment">//&#x8BBE;&#x7F6E;extent</span>
+    <span class="hljs-keyword">use</span> std::cmp::min;
+    <span class="hljs-keyword">let</span> image_count = min(
+        swapchain_support.capabilities.min_image_count + <span class="hljs-number">1</span>,
+        swapchain_support.capabilities.max_image_count,
+    );
+
+    <span class="hljs-keyword">let</span> (image_sharing_mode, queue_family_index_count, queue_family_indices) =
+        <span class="hljs-keyword">if</span> queue_family.graphics_family != queue_family.present_family {
+            (
+                vk::SharingMode::EXCLUSIVE,
+                <span class="hljs-number">2</span>,
+                <span class="hljs-built_in">vec!</span>[
+                    queue_family.graphics_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+                    queue_family.present_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>,
+                ],
+            )
+        } <span class="hljs-keyword">else</span> {
+            (vk::SharingMode::EXCLUSIVE, <span class="hljs-number">0</span>, <span class="hljs-built_in">vec!</span>[])
+        };
+
+    <span class="hljs-keyword">let</span> swapchain_create_info = vk::SwapchainCreateInfoKHR {
+        s_type: vk::StructureType::SWAPCHAIN_CREATE_INFO_KHR,
+        p_next: ptr::null(),
+        flags: vk::SwapchainCreateFlagsKHR::empty(),
+        surface: surface_stuff.surface,
+        min_image_count: image_count,
+        image_color_space: surface_format.color_space,
+        image_format: surface_format.format,
+        image_extent: extent,
+        image_usage: vk::ImageUsageFlags::COLOR_ATTACHMENT,
+        image_sharing_mode,
+        p_queue_family_indices: queue_family_indices.as_ptr(),
+        queue_family_index_count,
+        pre_transform: swapchain_support.capabilities.current_transform,
+        composite_alpha: vk::CompositeAlphaFlagsKHR::OPAQUE,
+        present_mode,
+        clipped: vk::TRUE,
+        old_swapchain: vk::SwapchainKHR::null(),
+        image_array_layers: <span class="hljs-number">1</span>,
+    };
+
+    <span class="hljs-keyword">let</span> swapchain_loader = ash::extensions::khr::Swapchain::new(instance, device);
+    <span class="hljs-keyword">let</span> swapchain = <span class="hljs-keyword">unsafe</span> {
+        swapchain_loader
+            .create_swapchain(&amp;swapchain_create_info, <span class="hljs-literal">None</span>)
+            .expect(<span class="hljs-string">&quot;&#x521B;&#x5EFA;&#x4EA4;&#x6362;&#x94FE;&#x5931;&#x8D25;&quot;</span>)
+    };
+
+    <span class="hljs-keyword">let</span> swapchain_images = <span class="hljs-keyword">unsafe</span> {
+        swapchain_loader
+            .get_swapchain_images(swapchain)
+            .expect(<span class="hljs-string">&quot;&#x83B7;&#x53D6;&#x4EA4;&#x6362;&#x94FE;&#x56FE;&#x50CF;&#x5931;&#x8D25;&quot;</span>)
+    };
+
+    SwapChainStuff {
+        swapchain_loader,
+        swapchain,
+        swapchain_format: surface_format.format,
+        swapchain_extent: extent,
+        swapchain_images,
+    }
+}
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">query_swapchain_support</span></span>(
+    physical_device: vk::PhysicalDevice,
+    surface_stuff: &amp;SurfaceStuff,
+) -&gt; SwapChainSupportDetail {
+    <span class="hljs-keyword">unsafe</span> {
+        <span class="hljs-keyword">let</span> capabilities = surface_stuff
+            .surface_loader
+            .get_physical_device_surface_capabilities(physical_device, surface_stuff.surface)
+            .expect(<span class="hljs-string">&quot;&#x67E5;&#x8BE2;&#x4EA4;&#x6362;&#x94FE;&#x529F;&#x80FD;&#x5931;&#x8D25;&quot;</span>);
+        <span class="hljs-keyword">let</span> formats = surface_stuff
+            .surface_loader
+            .get_physical_device_surface_formats(physical_device, surface_stuff.surface)
+            .expect(<span class="hljs-string">&quot;&#x67E5;&#x8BE2;&#x4EA4;&#x6362;&#x94FE;&#x683C;&#x5F0F;&#x5931;&#x8D25;&quot;</span>);
+        <span class="hljs-keyword">let</span> present_modes = surface_stuff
+            .surface_loader
+            .get_physical_device_surface_present_modes(physical_device, surface_stuff.surface)
+            .expect(<span class="hljs-string">&quot;&#x67E5;&#x8BE2;&#x7A97;&#x53E3;&#x6A21;&#x5F0F;&#x5931;&#x8D25;&quot;</span>);
+
+        SwapChainSupportDetail {
+            capabilities,
+            formats,
+            present_modes,
+        }
+    }
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">choose_swapchain_format</span></span>(
+    available_formats: &amp;<span class="hljs-built_in">Vec</span>&lt;vk::SurfaceFormatKHR&gt;,
+) -&gt; vk::SurfaceFormatKHR {
+    <span class="hljs-comment">// check if the list contains only one entry with undefined format</span>
+    <span class="hljs-comment">// it means that there are no preferred surface formats and any can be choosen</span>
+    <span class="hljs-keyword">if</span> available_formats.len() == <span class="hljs-number">1</span> &amp;&amp; available_formats[<span class="hljs-number">0</span>].format == vk::Format::UNDEFINED {
+        <span class="hljs-keyword">return</span> vk::SurfaceFormatKHR {
+            format: vk::Format::B8G8R8A8_UNORM,
+            color_space: vk::ColorSpaceKHR::SRGB_NONLINEAR,
+        };
+    }
+
+    <span class="hljs-comment">// check if list contains most widely used R8G8B8A8 format with nonlinear color space</span>
+    <span class="hljs-keyword">for</span> available_format <span class="hljs-keyword">in</span> available_formats {
+        <span class="hljs-keyword">if</span> available_format.format == vk::Format::B8G8R8A8_UNORM
+            &amp;&amp; available_format.color_space == vk::ColorSpaceKHR::SRGB_NONLINEAR
+        {
+            <span class="hljs-keyword">return</span> available_format.clone();
+        }
+    }
+
+    <span class="hljs-comment">// return the first format from the list</span>
+    <span class="hljs-keyword">return</span> available_formats.first().unwrap().clone();
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">choose_swapchain_present_mode</span></span>(
+    available_present_modes: &amp;<span class="hljs-built_in">Vec</span>&lt;vk::PresentModeKHR&gt;,
+) -&gt; vk::PresentModeKHR {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> best_mode = vk::PresentModeKHR::FIFO;
+
+    <span class="hljs-keyword">for</span> &amp;available_present_mode <span class="hljs-keyword">in</span> available_present_modes.iter() {
+        <span class="hljs-keyword">if</span> available_present_mode == vk::PresentModeKHR::MAILBOX {
+            <span class="hljs-keyword">return</span> available_present_mode;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> available_present_mode == vk::PresentModeKHR::IMMEDIATE {
+            best_mode = available_present_mode
+        }
+    }
+
+    best_mode
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">choose_swapchain_extent</span></span>(capabilities: &amp;vk::SurfaceCapabilitiesKHR) -&gt; vk::Extent2D {
+    <span class="hljs-keyword">if</span> capabilities.current_extent.width != u32::max_value() {
+        capabilities.current_extent
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">use</span> num::clamp;
+
+        vk::Extent2D {
+            width: clamp(
+                WINDOW_WIDTH,
+                capabilities.min_image_extent.width,
+                capabilities.max_image_extent.width,
+            ),
+            height: clamp(
+                WINDOW_HEIGHT,
+                capabilities.min_image_extent.height,
+                capabilities.max_image_extent.height,
+            ),
+        }
+    }
+}
+</code></pre>
+<p>&#x73B0;&#x5728;,&#x6211;&#x4EEC;&#x7684;&#x4EA4;&#x6362;&#x94FE;&#x5DF2;&#x7ECF;&#x88AB;&#x521B;&#x5EFA;&#x51FA;&#x6765;&#x4E86;,&#x8BA4;&#x771F;&#x6284;&#x4EE3;&#x7801;&#x7684;&#x540C;&#x5B66;&#x53EF;&#x80FD;&#x4F1A;&#x89C9;&#x5F97;&#x8FD9;&#x4E9B;&#x4EE3;&#x7801;&#x5F88;&#x7A7A;,&#x6CA1;&#x9519;,&#x9A6C;&#x4E0A;&#x5C31;&#x4F1A;&#x9762;&#x4E34;&#x5927;&#x5E45;&#x5EA6;&#x7684;&#x91CD;&#x5199;,&#x7B2C;&#x4E00;&#x5C31;&#x662F;&#x4ECE;2D&#x5230;3D&#x7684;&#x8F6C;&#x53D8;,&#x7B2C;&#x4E8C;&#x5C31;&#x662F;&#x7A97;&#x53E3;&#x5927;&#x5C0F;&#x53EF;&#x8C03;&#x8282;&#x8FD9;&#x4E2A;&#x80AF;&#x5B9A;&#x4F1A;&#x5199;&#x7684;!&#x5927;&#x5BB6;&#x653E;&#x5FC3;&#x597D;&#x4E86;.</p>
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x6765;&#x5230;<code>vki.rs</code>,&#x53C8;&#x5230;&#x4E86;&#x66F4;&#x65B0;&#x4ED6;&#x7684;&#x65F6;&#x5019;&#x4E86;!</p>
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> super::super::platforms::required_extension::*;
+<span class="hljs-keyword">use</span> super::super::utils::tools::*;
+<span class="hljs-keyword">use</span> super::consts::*;
+<span class="hljs-keyword">use</span> super::logical_device::*;
+<span class="hljs-keyword">use</span> super::physical_device::*;
+<span class="hljs-keyword">use</span> super::surface::*;
+<span class="hljs-keyword">use</span> super::swapchain::*;
+<span class="hljs-keyword">use</span> super::validation::*;
+<span class="hljs-keyword">use</span> ash::version::DeviceV1_0;
+<span class="hljs-keyword">use</span> ash::version::EntryV1_0;
+<span class="hljs-keyword">use</span> ash::version::InstanceV1_0;
+<span class="hljs-keyword">use</span> ash::vk;
+<span class="hljs-keyword">use</span> std::ffi::CString;
+<span class="hljs-keyword">use</span> std::ptr;
+<span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">VKI</span></span> {
+<span class="hljs-comment">//...</span>
+    <span class="hljs-keyword">pub</span> swapchain_stuff: SwapChainStuff,<span class="hljs-comment">//&#x66F4;&#x65B0;</span>
+}
+
+<span class="hljs-keyword">impl</span> VKI {
+    <span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">new</span></span>(window: &amp;winit::Window) -&gt; VKI {
+        <span class="hljs-keyword">let</span> entry = ash::Entry::new().unwrap();
+        <span class="hljs-keyword">let</span> instance = create_instance(
+            &amp;entry,
+            WINDOW_TITLE,
+            VALIDATION.is_enable,
+            &amp;VALIDATION.required_validation_layers.to_vec(),
+        );
+        <span class="hljs-keyword">let</span> surface_stuff = create_surface(&amp;entry, &amp;instance, window);
+        <span class="hljs-keyword">let</span> (debug_report, debug_callback) = setup_debug_callback(&amp;entry, &amp;instance);
+        <span class="hljs-keyword">let</span> physical_device = pick_physical_device(&amp;instance, &amp;surface_stuff);
+        <span class="hljs-keyword">let</span> (logical_device, family_indices) =
+            create_logical_device(&amp;instance, physical_device, &amp;VALIDATION, &amp;surface_stuff);
+        <span class="hljs-keyword">let</span> graphics_queue =
+            <span class="hljs-keyword">unsafe</span> { logical_device.get_device_queue(family_indices.graphics_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>, <span class="hljs-number">0</span>) };
+        <span class="hljs-keyword">let</span> present_queue =
+            <span class="hljs-keyword">unsafe</span> { logical_device.get_device_queue(family_indices.present_family <span class="hljs-keyword">as</span> <span class="hljs-keyword">u32</span>, <span class="hljs-number">0</span>) };
+        <span class="hljs-comment">//&#x66F4;&#x65B0;</span>
+        <span class="hljs-keyword">let</span> swapchain_stuff = create_swapchain(
+            &amp;instance,
+            &amp;logical_device,
+            physical_device,
+            &amp;surface_stuff,
+            &amp;family_indices,
+        );
+        <span class="hljs-keyword">return</span> VKI {
+<span class="hljs-comment">//...</span>
+            swapchain_stuff: swapchain_stuff,
+            <span class="hljs-comment">//&#x66F4;&#x65B0;</span>
+        };
+    }
+}
+<span class="hljs-keyword">impl</span> <span class="hljs-built_in">Drop</span> <span class="hljs-keyword">for</span> VKI {
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">drop</span></span>(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>) {
+        <span class="hljs-keyword">unsafe</span> {
+            <span class="hljs-comment">//&#x66F4;&#x65B0;</span>
+            <span class="hljs-keyword">self</span>.swapchain_stuff
+                .swapchain_loader
+                .destroy_swapchain(<span class="hljs-keyword">self</span>.swapchain_stuff.swapchain, <span class="hljs-literal">None</span>);
+            <span class="hljs-comment">//...</span>
+        }
+    }
+}
+</code></pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5C1D;&#x8BD5;&#x8FD0;&#x884C;&#x5B83;,&#x4E0D;&#x8FC7;&#x5E94;&#x8BE5;&#x4E0D;&#x4F1A;&#x53D1;&#x751F;&#x4EC0;&#x4E48;,&#x56E0;&#x4E3A;&#x6682;&#x65F6;&#x6211;&#x4EEC;&#x8FD8;&#x6CA1;&#x6709;&#x4F7F;&#x7528;.</p>
 
                                 
                                 </section>
@@ -684,7 +1108,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1.6 创建交换链","level":"1.5.7","depth":2,"next":{"title":"1.7 图片视图","level":"1.5.8","depth":2,"path":"画个三角形吧/1.7图片视图.md","ref":"画个三角形吧/1.7图片视图.md","articles":[]},"previous":{"title":"1.5 窗口表面","level":"1.5.6","depth":2,"path":"画个三角形吧/1.5窗口表面.md","ref":"画个三角形吧/1.5窗口表面.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.6创建交换链.md","mtime":"2019-04-05T02:41:45.737Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-11T20:01:14.358Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"1.6 创建交换链","level":"1.5.7","depth":2,"next":{"title":"1.7 图片视图","level":"1.5.8","depth":2,"path":"画个三角形吧/1.7图片视图.md","ref":"画个三角形吧/1.7图片视图.md","articles":[]},"previous":{"title":"1.5 窗口表面","level":"1.5.6","depth":2,"path":"画个三角形吧/1.5窗口表面.md","ref":"画个三角形吧/1.5窗口表面.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"画个三角形吧/1.6创建交换链.md","mtime":"2019-04-16T13:00:45.163Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-16T13:04:20.016Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
